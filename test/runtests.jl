@@ -1,4 +1,5 @@
-using IntegerSmithNormalForm: negateRow, negateCol, swapRows, swapCols, addRow, addCol
+using IntegerSmithNormalForm: negateRow, negateCol, swapRows, swapCols, addRow,
+addCol, SNF!
 using Base.Test
 
 @testset "Negating rows and columns" begin
@@ -92,4 +93,32 @@ end
     @test typeof(B) == typeof(A)
     @test typeof(T) == typeof(A)
 
+end
+
+function testSNF(A)
+    B = copy(A)
+    (S,B,T) = SNF!(B)
+    @test B == S*A*T
+    @test isdiag(B)
+    d = diag(B)
+    for i in 1:length(d)
+        @test d[i] >= 0
+        for j in i:length(d)
+            @test mod(d[j],d[i]) == 0
+        end
+    end
+end
+
+@testset "Test Smith Normal Form" begin
+    testSNF([[1 2 3];[4 5 6];[1 4 9]])
+
+    testSNF([[1 2];[4 5];[1 4]])
+
+    for s in 2:10
+        for r in 2:10
+            testSNF(rand(Int,(r,s)))
+            testSNF(rand(-2048:2048,(r,s)))
+            testSNF(rand(-10:10,(r,s)))
+        end
+    end
 end
