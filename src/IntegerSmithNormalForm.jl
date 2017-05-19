@@ -226,12 +226,12 @@ function SNF!{I<:Integer}(A::Array{I,2})
   (S,A,T)
 end
 
-function SNF(A::Array{I,2})
+function SNF(A)
   B = copy(A)
   SNF!(B)
 end
 
-function SNFWithoutTransform(A::Array)
+function SNFWithoutTransform(A)
   (S,B,T) = SNF(A)
   B
 end
