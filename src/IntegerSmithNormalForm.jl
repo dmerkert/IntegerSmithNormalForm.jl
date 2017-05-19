@@ -1,6 +1,6 @@
 module IntegerSmithNormalForm
 
-export SNF!, SNF
+export SNF!, SNF, SNFWithoutTransform
 
 """
     (S,B,T) = negateRow(A,i)
@@ -226,9 +226,14 @@ function SNF!{I<:Integer}(A::Array{I,2})
   (S,A,T)
 end
 
-function SNF{I<:Integer}(A::Array{I,2})
+function SNF(A::Array{I,2})
   B = copy(A)
   SNF!(B)
+end
+
+function SNFWithoutTransform(A::Array)
+  (S,B,T) = SNF(A)
+  B
 end
 
 end # module
