@@ -91,10 +91,9 @@ https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
 Algorithmus 1
 
 The matrices fulfill:
-* B = SAT
-* A is a diagonal matrix
-* A[i,i] >= 0 for all i
-* A[i,i] divides all A[j,j] for all j > i
+* B is a diagonal matrix
+* B[i,i] >= 0 for all i
+* B[i,i] divides all B[j,j] for all j > i
 """
 function SNF!{I<:Integer}(A::Array{I,2})
   d1 = size(A,1)
@@ -133,7 +132,7 @@ function SNF!{I<:Integer}(A::Array{I,2})
         if d1Sub > 1
           for i in 2:d1Sub
             #does not divide
-            if mod(ASub[i,1],ASub[1,1]) != 0
+            if mod.(ASub[i,1],ASub[1,1]) != 0
               divideCol=false
               q = div(ASub[i,1],ASub[1,1])
               #Add row 1 q-times to row i
@@ -155,7 +154,7 @@ function SNF!{I<:Integer}(A::Array{I,2})
         if d2Sub > 1
           for i in 1:d2Sub
             #does not divide
-            if mod(ASub[1,i],ASub[1,1]) != 0
+            if mod.(ASub[1,i],ASub[1,1]) != 0
               divideRow=false
               q = div(ASub[1,i],ASub[1,1])
               #Add col 1 q-times to col i
@@ -192,11 +191,11 @@ function SNF!{I<:Integer}(A::Array{I,2})
       end
 
       #check if the pivot element divides all elements of the matrix
-      divideMatrix = mod(ASub,ASub[1,1]) == zeros(size(ASub))
+      divideMatrix = mod.(ASub,ASub[1,1]) == zeros(size(ASub))
 
       if !divideMatrix
         #Add row of non-dividing index to pivot row
-        nonDividing = ind2sub(size(ASub),findnext(mod(ASub,ASub[1,1]),1))
+        nonDividing = ind2sub(size(ASub),findnext(mod.(ASub,ASub[1,1]),1))
         (S_,ASub,T_) = addRow(ASub,1,nonDividing[1],1)
         SSub = S_ * SSub
         TSub = TSub * T_
@@ -226,11 +225,38 @@ function SNF!{I<:Integer}(A::Array{I,2})
   (S,A,T)
 end
 
+"""
+    (S,B,T) = SNF(A)
+
+Computes the Smith normal form according to
+https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf 
+Algorithmus 1
+
+The matrices fulfill:
+* B = SAT
+* B is a diagonal matrix
+* B[i,i] >= 0 for all i
+* B[i,i] divides all B[j,j] for all j > i
+"""
 function SNF(A)
   B = copy(A)
   SNF!(B)
 end
 
+
+"""
+    B = SNFWithoutTransform(A)
+
+Computes the Smith normal form according to
+https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf 
+Algorithmus 1
+
+The matrix fulfills:
+* There are matrices S,T with |det(S)| = |det(T)| = 1 such that B = SAT
+* B is a diagonal matrix
+* B[i,i] >= 0 for all i
+* B[i,i] divides all B[j,j] for all j > i
+"""
 function SNFWithoutTransform(A)
   (S,B,T) = SNF(A)
   B
