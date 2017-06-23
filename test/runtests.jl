@@ -1,5 +1,5 @@
 using IntegerSmithNormalForm: negateRow, negateCol, swapRows, swapCols, addRow,
-addCol, SNF!
+addCol, SNF!, SNF, SNFWithoutTransform
 using Base.Test
 
 @testset "Negating rows and columns" begin
@@ -111,7 +111,6 @@ end
 
 @testset "Test Smith Normal Form" begin
     testSNF([[1 2 3];[4 5 6];[1 4 9]])
-
     testSNF([[1 2];[4 5];[1 4]])
 
     for s in 2:10
@@ -119,6 +118,26 @@ end
             testSNF(rand(Int,(r,s)))
             testSNF(rand(-2048:2048,(r,s)))
             testSNF(rand(-10:10,(r,s)))
+        end
+    end
+    (S,B,T) = SNF([[1 2 3];[4 5 6];[1 4 9]])
+    @test B == S*[[1 2 3];[4 5 6];[1 4 9]]*T
+    @test isdiag(B)
+    d = diag(B)
+    for i in 1:length(d)
+        @test d[i] >= 0
+        for j in i:length(d)
+            @test mod(d[j],d[i]) == 0
+        end
+    end
+
+    B = SNFWithoutTransform([[1 2 3];[4 5 6];[1 4 9]])
+    @test isdiag(B)
+    d = diag(B)
+    for i in 1:length(d)
+        @test d[i] >= 0
+        for j in i:length(d)
+            @test mod(d[j],d[i]) == 0
         end
     end
 end
