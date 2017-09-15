@@ -102,7 +102,7 @@ function SNF!{I<:Integer}(A::Array{I,2})
   S = eye(I,d1)
   T = eye(I,d2)
 
-  for subMatrixInd in 1:min(d1,d2)
+  for subMatrixInd in 1:(min(d1,d2))
     ASub = A[subMatrixInd:end,subMatrixInd:end]
     d1Sub = size(ASub,1)
     d2Sub = size(ASub,2)
@@ -110,106 +110,111 @@ function SNF!{I<:Integer}(A::Array{I,2})
     SSub = eye(I,d1Sub)
     TSub = eye(I,d2Sub)
 
-    pivot = ind2sub(size(ASub),findnext(ASub,1))
+    nextPivot = findnext(ASub,1)
 
-    #Step 2: Put pivot to (1,1)-position
-    (S_,ASub,T_) = swapRows(ASub,1,pivot[1])
-    SSub = S_ * SSub
-    TSub = TSub * T_
-    (S_,ASub,T_) = swapCols(ASub,1,pivot[2])
-    SSub = S_ * SSub
-    TSub = TSub * T_
+    if nextPivot != 0
 
-    divideMatrix = false
-    while !divideMatrix
-      #check if ASub[1,1] divides all elements in the
-      #column and row
-      divideCol = false
-      divideRow = false
-      while !(divideRow & divideCol)
-        divideCol=true
-        #check if ASub[1,1] divides all elements in its column
+      pivot = ind2sub(size(ASub),nextPivot)
+
+      #Step 2: Put pivot to (1,1)-position
+      (S_,ASub,T_) = swapRows(ASub,1,pivot[1])
+      SSub = S_ * SSub
+      TSub = TSub * T_
+      (S_,ASub,T_) = swapCols(ASub,1,pivot[2])
+      SSub = S_ * SSub
+      TSub = TSub * T_
+
+      divideMatrix = false
+      while !divideMatrix
+        #check if ASub[1,1] divides all elements in the
+        #column and row
+        divideCol = false
+        divideRow = false
+        while !(divideRow & divideCol)
+          divideCol=true
+          #check if ASub[1,1] divides all elements in its column
+          if d1Sub > 1
+            for i in 2:d1Sub
+              #does not divide
+              if mod.(ASub[i,1],ASub[1,1]) != 0
+                divideCol=false
+                q = div(ASub[i,1],ASub[1,1])
+                #Add row 1 q-times to row i
+                (S_,ASub,T_) = addRow(ASub,i,1,-q)
+                SSub = S_ * SSub
+                TSub = TSub * T_
+                #Make (1,i) the new pivot on position (1,1)
+                (S_,ASub,T_) = swapRows(ASub,1,i)
+                SSub = S_ * SSub
+                TSub = TSub * T_
+                break
+              end
+            end
+            divideCol || break
+          end
+
+          divideRow=true
+          #check if ASub[1,1] divides all elements in its row
+          if d2Sub > 1
+            for i in 1:d2Sub
+              #does not divide
+              if mod.(ASub[1,i],ASub[1,1]) != 0
+                divideRow=false
+                q = div(ASub[1,i],ASub[1,1])
+                #Add col 1 q-times to col i
+                (S_,ASub,T_) = addCol(ASub,i,1,-q)
+                SSub = S_ * SSub
+                TSub = TSub * T_
+                #Make (1,i) the new pivot on position (1,1)
+                (S_,ASub,T_) = swapCols(ASub,1,i)
+                SSub = S_ * SSub
+                TSub = TSub * T_
+                break
+              end
+            end
+          end
+        end
+
+        #eliminate all entries in the pivot row and column
         if d1Sub > 1
-          for i in 2:d1Sub
-            #does not divide
-            if mod.(ASub[i,1],ASub[1,1]) != 0
-              divideCol=false
-              q = div(ASub[i,1],ASub[1,1])
-              #Add row 1 q-times to row i
-              (S_,ASub,T_) = addRow(ASub,i,1,-q)
-              SSub = S_ * SSub
-              TSub = TSub * T_
-              #Make (1,i) the new pivot on position (1,1)
-              (S_,ASub,T_) = swapRows(ASub,1,i)
-              SSub = S_ * SSub
-              TSub = TSub * T_
-              break
-            end
+          for i = 2:d1Sub
+            q = div(ASub[i,1],ASub[1,1])
+            (S_,ASub,T_) = addRow(ASub,i,1,-q)
+            SSub = S_ * SSub
+            TSub = TSub * T_
           end
-          divideCol || break
         end
 
-        divideRow=true
-        #check if ASub[1,1] divides all elements in its row
         if d2Sub > 1
-          for i in 1:d2Sub
-            #does not divide
-            if mod.(ASub[1,i],ASub[1,1]) != 0
-              divideRow=false
-              q = div(ASub[1,i],ASub[1,1])
-              #Add col 1 q-times to col i
-              (S_,ASub,T_) = addCol(ASub,i,1,-q)
-              SSub = S_ * SSub
-              TSub = TSub * T_
-              #Make (1,i) the new pivot on position (1,1)
-              (S_,ASub,T_) = swapCols(ASub,1,i)
-              SSub = S_ * SSub
-              TSub = TSub * T_
-              break
-            end
+          for i = 2:d2Sub
+            q = div(ASub[1,i],ASub[1,1])
+            (S_,ASub,T_) = addCol(ASub,i,1,-q)
+            SSub = S_ * SSub
+            TSub = TSub * T_
           end
         end
-      end
 
-      #eliminate all entries in the pivot row and column
-      if d1Sub > 1
-        for i = 2:d1Sub
-          q = div(ASub[i,1],ASub[1,1])
-          (S_,ASub,T_) = addRow(ASub,i,1,-q)
+        #check if the pivot element divides all elements of the matrix
+        divideMatrix = mod.(ASub,ASub[1,1]) == zeros(size(ASub))
+
+        if !divideMatrix
+          #Add row of non-dividing index to pivot row
+          nonDividing = ind2sub(size(ASub),findnext(mod.(ASub,ASub[1,1]),1))
+          (S_,ASub,T_) = addRow(ASub,1,nonDividing[1],1)
           SSub = S_ * SSub
           TSub = TSub * T_
         end
       end
 
-      if d2Sub > 1
-        for i = 2:d2Sub
-          q = div(ASub[1,i],ASub[1,1])
-          (S_,ASub,T_) = addCol(ASub,i,1,-q)
-          SSub = S_ * SSub
-          TSub = TSub * T_
-        end
-      end
 
-      #check if the pivot element divides all elements of the matrix
-      divideMatrix = mod.(ASub,ASub[1,1]) == zeros(size(ASub))
-
-      if !divideMatrix
-        #Add row of non-dividing index to pivot row
-        nonDividing = ind2sub(size(ASub),findnext(mod.(ASub,ASub[1,1]),1))
-        (S_,ASub,T_) = addRow(ASub,1,nonDividing[1],1)
-        SSub = S_ * SSub
-        TSub = TSub * T_
-      end
+      S_ = eye(I,d1)
+      T_ = eye(I,d2)
+      S_[subMatrixInd:end,subMatrixInd:end] = SSub
+      T_[subMatrixInd:end,subMatrixInd:end] = TSub
+      S = S_ * S
+      T = T * T_
+      A[subMatrixInd:end,subMatrixInd:end] = ASub
     end
-
-
-    S_ = eye(I,d1)
-    T_ = eye(I,d2)
-    S_[subMatrixInd:end,subMatrixInd:end] = SSub
-    T_[subMatrixInd:end,subMatrixInd:end] = TSub
-    S = S_ * S
-    T = T * T_
-    A[subMatrixInd:end,subMatrixInd:end] = ASub
   end
 
   #make diagonal element positive

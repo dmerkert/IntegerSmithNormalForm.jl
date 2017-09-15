@@ -1,6 +1,7 @@
 using IntegerSmithNormalForm: negateRow, negateCol, swapRows, swapCols, addRow,
 addCol, SNF!, SNF, SNFWithoutTransform
 using Base.Test
+using ProgressMeter
 
 @testset "Negating rows and columns" begin
     A = [[1 2];[3 4]]
@@ -95,6 +96,47 @@ end
 
 end
 
+function getMatrix(
+                   k1,k2,k3, a
+                  )
+
+  b = 32
+
+  if a == 0
+    return [b k1 k2;
+            0 b k3;
+            0 0 b]
+  elseif a == 1
+    return [b 0 k2;
+            k1 b k3;
+            0 0 b]
+  elseif a == 2
+    return [b k1 0;
+            0 b k3;
+            k2 0 b]
+  elseif a == 3
+    return [b k1 k2;
+            0 b 0;
+            0 k3 b]
+  elseif a == 4
+    return [b 0 0;
+            k1 b k3;
+            k2 0 b]
+  elseif a == 5
+    return [b 0 k2;
+            k1 b 0;
+            0 k3 b]
+  elseif a == 6
+    return [b k1 0;
+            0 b 0;
+            k2 k3 b]
+  elseif a == 7
+    return [b 0 0;
+            k1 b 0;
+            k2 k3 b]
+  end
+end
+
 function testSNF(A)
     B = copy(A)
     (S,B,T) = SNF!(B)
@@ -103,23 +145,42 @@ function testSNF(A)
     d = diag(B)
     for i in 1:length(d)
         @test d[i] >= 0
-        for j in i:length(d)
-            @test mod(d[j],d[i]) == 0
+        if d[i] != 0
+            for j in i:length(d)
+                @test mod(d[j],d[i]) == 0
+            end
         end
     end
 end
 
 @testset "Test Smith Normal Form" begin
+
+    testSNF([16 -16 -16; -16 16 -2; 9 -9 16])
     testSNF([[1 2 3];[4 5 6];[1 4 9]])
     testSNF([[1 2];[4 5];[1 4]])
 
-    for s in 2:10
-        for r in 2:10
-            testSNF(rand(Int,(r,s)))
-            testSNF(rand(-2048:2048,(r,s)))
-            testSNF(rand(-10:10,(r,s)))
+
+
+    aRange = 0:7
+    k1Range = -32:1:32
+
+    simulations = length(aRange)*length(k1Range)^3
+    prog = Progress(simulations,dt=1.0, barglyphs=BarGlyphs("[=> ]"), barlen=50)
+
+    for a in aRange
+        for k1 in k1Range
+            for k2 in k1Range
+                for k3 in k1Range
+                    M = getMatrix(k1,k2,k3,a)
+                    testSNF(M)
+                    next!(prog)
+                end
+            end
         end
     end
+
+
+
     (S,B,T) = SNF([[1 2 3];[4 5 6];[1 4 9]])
     @test B == S*[[1 2 3];[4 5 6];[1 4 9]]*T
     @test isdiag(B)
