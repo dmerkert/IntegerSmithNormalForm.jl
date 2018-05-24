@@ -13,18 +13,22 @@ using Base.Test
     @test typeof(S) ==   typeof(A)
     @test typeof(Tmp) == typeof(A)
     @test typeof(T) ==   typeof(A)
+    @inferred negateRow(A,1)
 
     (S,Tmp,T) = negateRow(A,2)
     @test Tmp == [[1 2];[-3 -4]]
     @test S*A*T == Tmp
+    @inferred negateRow(A,2)
 
     (S,Tmp,T) = negateRow(B,3)
     @test Tmp == [[1 2 3];[4 5 6];[-7 -8 -9]]
     @test S*B*T == Tmp
+    @inferred negateRow(B,3)
 
     (S,Tmp,T) = negateRow(C,2)
     @test Tmp == [[1 2];[-3 -4];[5 6]]
     @test S*C*T == Tmp
+    @inferred negateRow(C,2)
 
 
     (S,Tmp,T) = negateCol(A,1)
@@ -33,18 +37,22 @@ using Base.Test
     @test typeof(S) ==   typeof(A)
     @test typeof(Tmp) == typeof(A)
     @test typeof(T) ==   typeof(A)
+    @inferred negateCol(A,1)
 
     (S,Tmp,T) = negateCol(A,2)
     @test Tmp == [[1 -2];[3 -4]]
     @test S*A*T == Tmp
+    @inferred negateCol(A,2)
 
     (S,Tmp,T) = negateCol(B,3)
     @test Tmp == [[1 2 -3];[4 5 -6];[7 8 -9]]
     @test S*B*T == Tmp
+    @inferred negateCol(B,3)
 
     (S,Tmp,T) = negateCol(C,2)
     @test Tmp == [[1 -2];[3 -4];[5 -6]]
     @test S*C*T == Tmp
+    @inferred negateCol(C,2)
 end
 
 @testset "Swapping rows and columns" begin
@@ -56,10 +64,12 @@ end
     @test typeof(S) == typeof(A)
     @test typeof(B) == typeof(A)
     @test typeof(T) == typeof(A)
+    @inferred swapRows(A,1,2)
 
     (S,B,T) = swapRows(A,3,2)
     @test B == [[1 2];[5 6];[3 4]]
     @test S*A*T == B
+    @inferred swapRows(A,3,2)
 
     A = [[1 2 3];[4 5 6]]
     (S,B,T) = swapCols(A,1,2)
@@ -68,10 +78,12 @@ end
     @test typeof(S) == typeof(A)
     @test typeof(B) == typeof(A)
     @test typeof(T) == typeof(A)
+    @inferred swapCols(A,1,2)
 
     (S,B,T) = swapCols(A,3,2)
     @test B == [[1 3 2];[4 6 5]]
     @test S*A*T == B
+    @inferred swapCols(A,3,2)
 end
 
 @testset "Adding rows and columns" begin
@@ -83,6 +95,7 @@ end
     @test typeof(S) == typeof(A)
     @test typeof(B) == typeof(A)
     @test typeof(T) == typeof(A)
+    @inferred addRow(A,1,2,10)
 
     A = [[1 2 3];[4 5 6]]
 
@@ -92,6 +105,7 @@ end
     @test typeof(S) == typeof(A)
     @test typeof(B) == typeof(A)
     @test typeof(T) == typeof(A)
+    @inferred addCol(A,2,3,10)
 
 end
 
@@ -138,6 +152,8 @@ end
 
 function testSNF(A)
     B = copy(A)
+    @inferred SNF!(B)
+    B = copy(A)
     (S,B,T) = SNF!(B)
     @test B == S*A*T
     @test isdiag(B)
@@ -158,10 +174,8 @@ end
     testSNF([[1 2 3];[4 5 6];[1 4 9]])
     testSNF([[1 2];[4 5];[1 4]])
 
-
-
     aRange = 0:7
-    k1Range = -32:1:32
+    k1Range = [-24:1:24..., 99,100,101]
 
     simulations = length(aRange)*length(k1Range)^3
 
@@ -179,6 +193,7 @@ end
 
 
     (S,B,T) = SNF([[1 2 3];[4 5 6];[1 4 9]])
+    @inferred SNF([[1 2 3];[4 5 6];[1 4 9]])
     @test B == S*[[1 2 3];[4 5 6];[1 4 9]]*T
     @test isdiag(B)
     d = diag(B)
@@ -190,6 +205,7 @@ end
     end
 
     B = SNFWithoutTransform([[1 2 3];[4 5 6];[1 4 9]])
+    @inferred SNFWithoutTransform([[1 2 3];[4 5 6];[1 4 9]])
     @test isdiag(B)
     d = diag(B)
     for i in 1:length(d)
