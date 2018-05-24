@@ -1,7 +1,6 @@
 using IntegerSmithNormalForm: negateRow, negateCol, swapRows, swapCols, addRow,
 addCol, SNF!, SNF, SNFWithoutTransform
 using Base.Test
-using ProgressMeter
 
 @testset "Negating rows and columns" begin
     A = [[1 2];[3 4]]
@@ -165,7 +164,6 @@ end
     k1Range = -32:1:32
 
     simulations = length(aRange)*length(k1Range)^3
-    prog = Progress(simulations,dt=1.0, barglyphs=BarGlyphs("[=> ]"), barlen=50)
 
     for a in aRange
         for k1 in k1Range
@@ -173,7 +171,6 @@ end
                 for k3 in k1Range
                     M = getMatrix(k1,k2,k3,a)
                     testSNF(M)
-                    next!(prog)
                 end
             end
         end
