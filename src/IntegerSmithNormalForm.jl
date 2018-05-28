@@ -7,7 +7,7 @@ export SNF!, SNF, SNFWithoutTransform
 
   Negate the i-th row of the integer matrix A such that B = SAT holds true
 """
-function negateRow{I}(A::Array{I,2},i)
+function negateRow(A<:AbstractArray{I,2},i) where I
   S = eye(I,size(A,1))
   T = eye(I,size(A,2))
   S[i,i] = -1
@@ -21,7 +21,7 @@ end
 
   Negate the i-th column of the integer matrix A such that B = SAT holds true
 """
-function negateCol{I}(A::Array{I,2},i)
+function negateCol(A<:AbstractArray{I,2},i) where I
   (S,B,T) = negateRow(A',i)
   (T',B',S')
 end
@@ -32,7 +32,7 @@ end
 
   Negate the i-th and j-th row of the integer matrix A such that B = SAT holds true
 """
-function swapRows{I}(A::Array{I,2},i,j)
+function swapRows(A<:AbstractArray{I,2},i,j) where I
   S = eye(I,size(A,1))
   T = eye(I,size(A,2))
 
@@ -50,7 +50,7 @@ end
 
   Negate the i-th and j-th column of the integer matrix A such that B = SAT holds true
 """
-function swapCols{I}(A::Array{I,2},i,j)
+function swapCols(A<:AbstractArray{I,2},i,j) where I
   (S,B,T) = swapRows(A',i,j)
   (T',B',S')
 end
@@ -61,7 +61,7 @@ end
 
   Add the j-th row a times to the i-th row of the integer matrix A such that B = SAT holds true
 """
-function addRow{I}(A::Array{I,2},i,j,a::I)
+function addRow(A<:AbstractArray{I,2},i,j,a::I) where I
   S = eye(I,size(A,1))
   T = eye(I,size(A,2))
 
@@ -76,8 +76,7 @@ end
 
   Add the j-th column a times to the i-th column of the integer matrix A such that B = SAT holds true
 """
-
-function addCol{I}(A::Array{I,2},i,j,a::I)
+function addCol(A<:AbstractArray{I,2},i,j,a::I) where I
   (S,B,T) = addRow(A',i,j,a)
   (T',B',S')
 end
@@ -95,7 +94,7 @@ The matrices fulfill:
 * B[i,i] >= 0 for all i
 * B[i,i] divides all B[j,j] for all j > i
 """
-function SNF!{I<:Integer}(A::Array{I,2})
+function SNF!(A<:AbstractArray{I,2}) where {I<:Integer}
   d1 = size(A,1)
   d2 = size(A,2)
 
