@@ -50,7 +50,7 @@ end
 
   Negate the i-th and j-th column of the integer matrix A such that B = SAT holds true
 """
-function swapCols(A::AbstractArray{I,3},i,j) where I
+function swapCols(A::AbstractArray{I,2},i,j) where I
   (S,B,T) = swapRows(A',i,j)
   (T',B',S')
 end
