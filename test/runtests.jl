@@ -10,9 +10,6 @@ using Base.Test
     (S,Tmp,T) = negateRow(A,1)
     @test Tmp == [[-1 -2];[3 4]]
     @test S*A*T == Tmp
-    @test typeof(S) ==   typeof(A)
-    @test typeof(Tmp) == typeof(A)
-    @test typeof(T) ==   typeof(A)
     @inferred negateRow(A,1)
 
     (S,Tmp,T) = negateRow(A,2)
@@ -34,9 +31,6 @@ using Base.Test
     (S,Tmp,T) = negateCol(A,1)
     @test Tmp == [[-1 2];[-3 4]]
     @test S*A*T == Tmp
-    @test typeof(S) ==   typeof(A)
-    @test typeof(Tmp) == typeof(A)
-    @test typeof(T) ==   typeof(A)
     @inferred negateCol(A,1)
 
     (S,Tmp,T) = negateCol(A,2)
@@ -61,9 +55,6 @@ end
     (S,B,T) = swapRows(A,1,2)
     @test B == [[3 4];[1 2];[5 6]]
     @test S*A*T == B
-    @test typeof(S) == typeof(A)
-    @test typeof(B) == typeof(A)
-    @test typeof(T) == typeof(A)
     @inferred swapRows(A,1,2)
 
     (S,B,T) = swapRows(A,3,2)
@@ -75,9 +66,6 @@ end
     (S,B,T) = swapCols(A,1,2)
     @test B == [[2 1 3];[5 4 6]]
     @test S*A*T == B
-    @test typeof(S) == typeof(A)
-    @test typeof(B) == typeof(A)
-    @test typeof(T) == typeof(A)
     @inferred swapCols(A,1,2)
 
     (S,B,T) = swapCols(A,3,2)
@@ -92,9 +80,6 @@ end
     (S,B,T) = addRow(A,1,2,10)
     @test B == [[31 42];[3 4];[5 6]]
     @test S*A*T == B
-    @test typeof(S) == typeof(A)
-    @test typeof(B) == typeof(A)
-    @test typeof(T) == typeof(A)
     @inferred addRow(A,1,2,10)
 
     A = [[1 2 3];[4 5 6]]
@@ -102,9 +87,6 @@ end
     (S,B,T) = addCol(A,2,3,10)
     @test B == [[1 32 3];[4 65 6]]
     @test S*A*T == B
-    @test typeof(S) == typeof(A)
-    @test typeof(B) == typeof(A)
-    @test typeof(T) == typeof(A)
     @inferred addCol(A,2,3,10)
 
 end
