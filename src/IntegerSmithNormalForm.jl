@@ -108,9 +108,7 @@ function SNF!(A::AbstractMatrix{E}) where {E<:Integer}
         ms, ns = size(As)
         Ss = Matrix{E}(I, ms, ms)
         Ts = Matrix{E}(I, ns, ns)
-
-        pivot = findnext(As != 0, CartesianIndex(1, 1))
-
+        pivot = findnext(As .!= 0, CartesianIndex(1, 1))
         if !isnothing(pivot)
             #Step 2: Put pivot to (1,1)-position
             (S_, As, T_) = swapRows(As, 1, pivot[1])
@@ -195,8 +193,9 @@ function SNF!(A::AbstractMatrix{E}) where {E<:Integer}
 
                 if !divideMatrix
                     #Add row of non-dividing index to pivot row
-                    nonDividing = ind2sub(size(As), findnext(mod.(As, As[1, 1]), 1))
-                    (S_, As, T_) = addRow(As, 1, nonDividing[1], 1)
+
+                    non_div = findnext(mod.(As, As[1, 1]) .!= zero(E), CartesianIndex(1,1))
+                    (S_, As, T_) = addRow(As, 1, non_div[1], 1)
                     Ss = S_ * Ss
                     Ts = Ts * T_
                 end
@@ -205,11 +204,11 @@ function SNF!(A::AbstractMatrix{E}) where {E<:Integer}
 
             S_ = Matrix{E}(I, m, m)
             T_ = Matrix{E}(I, n, n)
-            S_[k:end, k:end] = SSub
-            T_[k:end, k:end] = TSub
+            S_[k:end, k:end] = Ss
+            T_[k:end, k:end] = Ts
             S = S_ * S
             T = T * T_
-            A[k:end, k:end] = ASub
+            A[k:end, k:end] = As
         end
     end
 

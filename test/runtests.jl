@@ -3,6 +3,8 @@ using IntegerSmithNormalForm, Test
 using IntegerSmithNormalForm:
     negateRow, negateCol, swapRows, swapCols, addRow, addCol, SNF!, SNF, SNFWithoutTransform
 
+using LinearAlgebra: diag, isdiag
+
 @testset "Negating rows and columns" begin
     A = [[1 2]; [3 4]]
     B = [[1 2 3]; [4 5 6]; [7 8 9]]
