@@ -1,10 +1,12 @@
 # IntegerSmithNormalForm
 
-[![Build Status](https://travis-ci.org/dmerkert/IntegerSmithNormalForm.jl.svg?branch=master)](https://travis-ci.org/dmerkert/IntegerSmithNormalForm.jl) [![Coverage Status](https://coveralls.io/repos/github/dmerkert/IntegerSmithNormalForm.jl/badge.svg?branch=master)](https://coveralls.io/github/dmerkert/IntegerSmithNormalForm.jl?branch=master)
+[![CI](https://github.com/dmerkert/IntegerSmithNormalForm.jl/workflows/CI/badge.svg)](https://github.com/dmerkert/IntegerSmithNormalForm.jl/actions?query=workflow%3ACI+branch%3Amaster)
+[![codecov](https://codecov.io/gh/dmerkert/IntegerSmithNormalForm.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/dmerkert/IntegerSmithNormalForm.jl)
+
 
 This package computes the Smith Normal Form on integer matrices and provides the respective transformation matrices.
 
 It uses the method described in
-https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf 
+https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
 Algorithmus 1
 to compute the Smith Normal Form.
