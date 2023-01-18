@@ -170,8 +170,8 @@ end
 @testset "Test Smith Normal Form" begin
 
     testSNF([16 -16 -16; -16 16 -2; 9 -9 16])
-    testSNF([[1 2 3]; [4 5 6]; [1 4 9]])
-    testSNF([[1 2]; [4 5]; [1 4]])
+    testSNF([1 2 3; 4 5 6; 1 4 9])
+    testSNF([1 2; 4 5; 1 4])
 
     aRange = 0:7
     k1Range = [-24:1:24..., 99, 100, 101]
@@ -191,9 +191,9 @@ end
 
 
 
-    (S, B, T) = SNF([[1 2 3]; [4 5 6]; [1 4 9]])
-    @inferred SNF([[1 2 3]; [4 5 6]; [1 4 9]])
-    @test B == S * [[1 2 3]; [4 5 6]; [1 4 9]] * T
+    (S, B, T) = SNF([1 2 3; 4 5 6; 1 4 9])
+    @inferred SNF([1 2 3; 4 5 6; 1 4 9])
+    @test B == S * [1 2 3; 4 5 6; 1 4 9] * T
     @test isdiag(B)
     d = diag(B)
     for i = 1:length(d)
@@ -203,8 +203,8 @@ end
         end
     end
 
-    B = SNFWithoutTransform([[1 2 3]; [4 5 6]; [1 4 9]])
-    @inferred SNFWithoutTransform([[1 2 3]; [4 5 6]; [1 4 9]])
+    B = SNFWithoutTransform([1 2 3; 4 5 6; 1 4 9])
+    @inferred SNFWithoutTransform([1 2 3; 4 5 6; 1 4 9])
     @test isdiag(B)
     d = diag(B)
     for i = 1:length(d)

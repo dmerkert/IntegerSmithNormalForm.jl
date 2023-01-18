@@ -194,7 +194,7 @@ function SNF!(A::AbstractMatrix{E}) where {E<:Integer}
                 if !divideMatrix
                     #Add row of non-dividing index to pivot row
 
-                    non_div = findnext(mod.(As, As[1, 1]) .!= zero(E), CartesianIndex(1,1))
+                    non_div = findnext(mod.(As, As[1, 1]) .!= zero(E), CartesianIndex(1, 1))
                     (S_, As, T_) = addRow(As, 1, non_div[1], 1)
                     Ss = S_ * Ss
                     Ts = Ts * T_
@@ -238,8 +238,7 @@ The matrices fulfill:
 """
 function SNF(A)
     B = copy(A)
-    SNF!(B)
-    return B
+    return SNF!(B)
 end
 
 
