@@ -1,7 +1,7 @@
 using IntegerSmithNormalForm, Test
 
 using IntegerSmithNormalForm:
-    negateRow, negateCol, swapRows, swapCols, addRow, addCol, SNF!, SNF, SNFWithoutTransform
+    negateRow, negateCol, swapRows, swapCols, addRow, addCol, snf!, snf, elementary_divisors
 
 using LinearAlgebra: diag, isdiag
 
@@ -149,11 +149,11 @@ function getMatrix(k1, k2, k3, a)
     end
 end
 
-function testSNF(A)
+function testsnf(A)
     B = copy(A)
-    @inferred SNF!(B)
+    @inferred snf!(B)
     B = copy(A)
-    (S, B, T) = SNF!(B)
+    (S, B, T) = snf!(B)
     @test B == S * A * T
     @test isdiag(B)
     d = diag(B)
@@ -169,9 +169,9 @@ end
 
 @testset "Test Smith Normal Form" begin
 
-    testSNF([16 -16 -16; -16 16 -2; 9 -9 16])
-    testSNF([1 2 3; 4 5 6; 1 4 9])
-    testSNF([1 2; 4 5; 1 4])
+    testsnf([16 -16 -16; -16 16 -2; 9 -9 16])
+    testsnf([1 2 3; 4 5 6; 1 4 9])
+    testsnf([1 2; 4 5; 1 4])
 
     aRange = 0:7
     k1Range = [-24:1:24..., 99, 100, 101]
@@ -183,7 +183,7 @@ end
             for k2 in k1Range
                 for k3 in k1Range
                     M = getMatrix(k1, k2, k3, a)
-                    testSNF(M)
+                    testsnf(M)
                 end
             end
         end
@@ -191,8 +191,8 @@ end
 
 
 
-    (S, B, T) = SNF([1 2 3; 4 5 6; 1 4 9])
-    @inferred SNF([1 2 3; 4 5 6; 1 4 9])
+    (S, B, T) = snf([1 2 3; 4 5 6; 1 4 9])
+    @inferred snf([1 2 3; 4 5 6; 1 4 9])
     @test B == S * [1 2 3; 4 5 6; 1 4 9] * T
     @test isdiag(B)
     d = diag(B)
@@ -203,10 +203,8 @@ end
         end
     end
 
-    B = SNFWithoutTransform([1 2 3; 4 5 6; 1 4 9])
-    @inferred SNFWithoutTransform([1 2 3; 4 5 6; 1 4 9])
-    @test isdiag(B)
-    d = diag(B)
+    d = elementary_divisors([1 2 3; 4 5 6; 1 4 9])
+    @inferred elementary_divisors([1 2 3; 4 5 6; 1 4 9])
     for i = 1:length(d)
         @test d[i] >= 0
         for j = i:length(d)

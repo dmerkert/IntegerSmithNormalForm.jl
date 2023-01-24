@@ -1,7 +1,7 @@
 module IntegerSmithNormalForm
-using LinearAlgebra: I
+using LinearAlgebra: I, diag
 
-export snf!, snf, snfWithoutTransform
+export snf!, snf, elementary_divisors
 
 """
     (S,B,T) = negateRow(A,i)
@@ -89,11 +89,10 @@ end
 """
     (S,B,T) = snf!(A)
 
-Computes the Smith normal form according to
-https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
-Algorithmus 1
+Computes the Smith normal form `B = SAT`, where `B` is computed inplace of `A`.
 
-The matrices fulfill:
+The matrices `S,B,T` are integer matrices with
+* |det(S)| = |det(T)| = 1 such that B = SAT
 * B is a diagonal matrix
 * B[i,i] >= 0 for all i
 * B[i,i] divides all B[j,j] for all j > i
@@ -226,12 +225,10 @@ end
 """
     (S,B,T) = snf(A)
 
-Computes the Smith normal form according to
-https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
-Algorithmus 1
+Computes the Smith normal form `B = SAT`
 
-The matrices fulfill:
-* B = SAT
+The matrices `S,B,T` are integer matrices with
+* |det(S)| = |det(T)| = 1 such that B = SAT
 * B is a diagonal matrix
 * B[i,i] >= 0 for all i
 * B[i,i] divides all B[j,j] for all j > i
@@ -243,21 +240,19 @@ end
 
 
 """
-    B = snfWithoutTransform(A)
+    B = elementary_divisors(A)
 
-Computes the Smith normal form according to
-https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
-Algorithmus 1
+Computes the Smith normal form of `A`, `B=SAT` returning the elementary divisors,
+the diagonal of `B`.
 
-The matrix fulfills:
-* There are matrices S,T with |det(S)| = |det(T)| = 1 such that B = SAT
+The matrices `S,B,T` are integer matrices with
+* |det(S)| = |det(T)| = 1 such that B = SAT
 * B is a diagonal matrix
 * B[i,i] >= 0 for all i
 * B[i,i] divides all B[j,j] for all j > i
 """
-function snfWithoutTransform(A)
-    (S, B, T) = snf(A)
-    B
+function elementary_divisors(A)
+    return diag(snf(A)[2])
 end
 
 end # module
