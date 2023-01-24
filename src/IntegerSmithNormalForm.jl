@@ -1,7 +1,7 @@
 module IntegerSmithNormalForm
 using LinearAlgebra: I
 
-export SNF!, SNF, SNFWithoutTransform
+export snf!, snf, snfWithoutTransform
 
 """
     (S,B,T) = negateRow(A,i)
@@ -87,7 +87,7 @@ end
 
 
 """
-    (S,B,T) = SNF!(A)
+    (S,B,T) = snf!(A)
 
 Computes the Smith normal form according to
 https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
@@ -98,7 +98,7 @@ The matrices fulfill:
 * B[i,i] >= 0 for all i
 * B[i,i] divides all B[j,j] for all j > i
 """
-function SNF!(A::AbstractMatrix{E}) where {E<:Integer}
+function snf!(A::AbstractMatrix{E}) where {E<:Integer}
     m, n = size(A)
     S = Matrix{E}(I, m, m)
     T = Matrix{E}(I, n, n)
@@ -224,7 +224,7 @@ function SNF!(A::AbstractMatrix{E}) where {E<:Integer}
 end
 
 """
-    (S,B,T) = SNF(A)
+    (S,B,T) = snf(A)
 
 Computes the Smith normal form according to
 https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
@@ -236,14 +236,14 @@ The matrices fulfill:
 * B[i,i] >= 0 for all i
 * B[i,i] divides all B[j,j] for all j > i
 """
-function SNF(A)
+function snf(A)
     B = copy(A)
-    return SNF!(B)
+    return snf!(B)
 end
 
 
 """
-    B = SNFWithoutTransform(A)
+    B = snfWithoutTransform(A)
 
 Computes the Smith normal form according to
 https://www.charite.de/sysbio/people/hoppe/Diplomarbeit_Hoppe.pdf
@@ -255,8 +255,8 @@ The matrix fulfills:
 * B[i,i] >= 0 for all i
 * B[i,i] divides all B[j,j] for all j > i
 """
-function SNFWithoutTransform(A)
-    (S, B, T) = SNF(A)
+function snfWithoutTransform(A)
+    (S, B, T) = snf(A)
     B
 end
 
